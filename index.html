@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Room Buyers Follow-On</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&display=swap">
+<style>
+:root{
+  --ground:#ffffff; --page:#ececec; --panel:#fbfaf6;
+  --ink:#101010; --ink-2:#4a4a44; --ink-3:#7c7c72;
+  --rule:#e2e1d8;
+  --brand:#F1DD6B; --brand-soft:#fbf3c4; --brand-edge:#a8941f;
+  --both:#1a7f37; --both-bg:#d5efdc;
+  --bgs:#1f5fa8; --bgs-bg:#dbe8f7;
+  --icons:#7a3fa0; --icons-bg:#ecdff5;
+  --none:#8a6d00; --none-bg:#f6eccb;
+}
+*{box-sizing:border-box}
+body{margin:0; background:var(--page); color:var(--ink);
+  font-family:Arial,Helvetica,sans-serif; font-size:14px; line-height:1.45; -webkit-font-smoothing:antialiased}
+h1,h2,.num{font-family:Archivo,Arial,Helvetica,sans-serif}
+.num,table{font-variant-numeric:tabular-nums}
+.sheet{max-width:1200px; margin:14px auto; background:var(--ground); box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.strip{background:#101010; color:var(--brand); font-size:11px; font-weight:bold; letter-spacing:.7px;
+  padding:7px 18px; display:flex; align-items:center; gap:9px}
+.strip .src{margin-left:auto; color:#9a988c; font-weight:normal; letter-spacing:.2px}
+.pip{width:8px;height:8px;border-radius:50%;background:var(--brand); animation:blip 2s ease-in-out infinite}
+.pip.err{background:#ff6b5b}
+@keyframes blip{0%,100%{opacity:1}50%{opacity:.3}}
+header{display:flex; align-items:center; gap:12px; padding:20px 24px 16px; border-bottom:3px solid var(--brand); flex-wrap:wrap}
+header h1{margin:0; font-size:24px; font-weight:700; letter-spacing:-.01em}
+header p{margin:2px 0 0; color:var(--ink-2); font-size:12.5px}
+header .btns{margin-left:auto}
+.btn{border:1px solid #cfcfc8; background:#f3f3f1; border-radius:5px; padding:8px 13px; font:bold 12px Arial,sans-serif; cursor:pointer; color:var(--ink)}
+.btn:hover{background:#e9e9e5}
+.wrap{padding:16px 24px 40px; display:flex; flex-direction:column; gap:22px}
+.lbl-sm{font-size:11px; font-weight:bold; letter-spacing:.09em; text-transform:uppercase; color:var(--ink-2); margin:0 0 8px}
+h2{font-size:17px; margin:0 0 4px}
+.hint{color:var(--ink-3); font-size:12.5px; margin:0 0 10px}
+.err{background:#fde8e6; color:#8a1c12; padding:10px 14px; border-radius:6px; font-size:13px}
+
+.chips{display:flex; flex-wrap:wrap; gap:6px}
+.chip{border:1px solid var(--rule); border-left:4px solid #cfcfc8; border-radius:4px; background:#fff;
+  padding:6px 12px; cursor:pointer; font:bold 12.5px Arial,sans-serif; color:var(--ink)}
+.chip:hover{border-color:#bdbdb3}
+.chip.on{background:var(--brand-soft); border-color:var(--brand-edge); border-left-color:var(--brand-edge)}
+.chip .cnt{font-weight:normal; color:var(--ink-3); margin-left:4px}
+
+.cards{display:grid; grid-template-columns:repeat(5,1fr); gap:10px}
+.card{border:1px solid var(--rule); border-top:4px solid #101010; border-radius:6px; padding:12px 14px; background:var(--panel)}
+.card .k{font-size:11px; font-weight:bold; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-2)}
+.card .v{font-family:Archivo,Arial,sans-serif; font-weight:800; font-size:30px; line-height:1.1; margin-top:4px}
+.card .s{color:var(--ink-3); font-size:12px; margin-top:2px}
+.card.both{border-top-color:var(--both)} .card.bgs{border-top-color:var(--bgs)}
+.card.icons{border-top-color:var(--icons)} .card.none{border-top-color:var(--none)}
+
+.bar{display:flex; height:30px; border-radius:5px; overflow:hidden; background:#f0efe8; gap:2px}
+.bar > div{display:flex; align-items:center; justify-content:center; color:#fff; font:bold 12px Arial,sans-serif; white-space:nowrap; overflow:hidden; min-width:0}
+.legend{display:flex; flex-wrap:wrap; gap:14px; margin-top:8px; font-size:12.5px; color:var(--ink-2)}
+.legend i{display:inline-block; width:10px; height:10px; border-radius:2px; margin-right:5px; vertical-align:-1px}
+
+table{width:100%; border-collapse:collapse; font-size:13.5px}
+th{text-align:left; font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:var(--ink-2); border-bottom:2px solid #101010; padding:7px 8px}
+td{border-bottom:1px solid var(--rule); padding:8px; vertical-align:top}
+td.r, th.r{text-align:right}
+tr.total td{font-weight:bold; border-top:2px solid #101010; border-bottom:0}
+.pill{display:inline-block; border-radius:10px; padding:2px 9px; font-size:11.5px; font-weight:bold; white-space:nowrap}
+.pill.both{background:var(--both-bg); color:var(--both)} .pill.bgs{background:var(--bgs-bg); color:var(--bgs)}
+.pill.icons{background:var(--icons-bg); color:var(--icons)} .pill.none{background:var(--none-bg); color:var(--none)}
+.sub{color:var(--ink-3); font-size:12px}
+.date{white-space:nowrap}
+.muted{color:var(--ink-3)}
+footer{color:var(--ink-3); font-size:12px; padding:0 24px 24px}
+footer ul{margin:6px 0 0; padding-left:18px}
+
+@media (max-width:860px){
+  .cards{grid-template-columns:repeat(2,1fr)}
+  .cards .card:first-child{grid-column:1 / -1}
+}
+@media (max-width:700px){
+  .sheet{margin:0}
+  header,.wrap{padding-left:16px; padding-right:16px}
+  footer{padding-left:16px; padding-right:16px}
+  header .btns{margin-left:0}
+  .strip .src{display:none}
+  table.stack thead{display:none}
+  table.stack, table.stack tbody, table.stack tr, table.stack td{display:block; width:100%}
+  table.stack tr{border:1px solid var(--rule); border-radius:6px; padding:8px 10px; margin-bottom:8px; background:var(--panel)}
+  table.stack td{border:0; padding:3px 0; display:flex; justify-content:space-between; gap:12px; text-align:right}
+  table.stack td::before{content:attr(data-l); font-size:11px; font-weight:bold; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-2); text-align:left; flex:none}
+  table.stack td.first{display:block; text-align:left; font-size:15px; font-weight:bold; padding-bottom:4px; border-bottom:1px solid var(--rule); margin-bottom:4px}
+  table.stack td.first::before{display:none}
+  table.stack tr.total{background:#101010; color:var(--brand)}
+  table.stack tr.total td::before{color:#cfcfc8}
+}
+</style>
+</head>
+<body>
+<div class="sheet">
+  <div class="strip"><span class="pip" id="pip"></span><span id="live">LOADING</span><span class="src">Live from Odoo · refreshes every 5 minutes</span></div>
+  <header>
+    <div>
+      <h1>Room buyers → BGS &amp; Business Icons</h1>
+      <p>People who bought in the room at an in-person event from 14 Oct 2026, and whether they've booked a Business Growth Secrets date, a Business Icons date, or both.</p>
+    </div>
+    <div class="btns"><button class="btn" id="refresh">Refresh now</button></div>
+  </header>
+  <div class="wrap">
+    <div id="error"></div>
+    <div>
+      <p class="lbl-sm">Event</p>
+      <div class="chips" id="eventChips"></div>
+    </div>
+    <div class="cards" id="cards"></div>
+    <div>
+      <div class="bar" id="bar"></div>
+      <div class="legend">
+        <span><i style="background:var(--both)"></i>Booked both</span>
+        <span><i style="background:var(--bgs)"></i>BGS only</span>
+        <span><i style="background:var(--icons)"></i>Icons only</span>
+        <span><i style="background:var(--none)"></i>Not booked yet</span>
+      </div>
+    </div>
+    <section>
+      <h2>By event</h2>
+      <p class="hint">Room buyers at each event and what they've booked since.</p>
+      <table class="stack" id="byEvent"></table>
+    </section>
+    <section>
+      <h2>Buyers</h2>
+      <p class="hint" id="buyersHint"></p>
+      <div class="chips" id="statusChips" style="margin-bottom:10px"></div>
+      <table class="stack" id="buyers"></table>
+    </section>
+  </div>
+  <footer>
+    <strong>How it's counted</strong>
+    <ul>
+      <li>Events: SMMU, Business Scale Up (HQ and other towns) and Business Start Up days. Webinars are left out.</li>
+      <li>Room buyer: a confirmed order on the event's sales in Odoo, on or after the event day, £50+ ex VAT. VIP tickets and upgrades are left out.</li>
+      <li>Booked: a place (not cancelled) on a BGS or Business Icons date on or after the day they bought.</li>
+    </ul>
+  </footer>
+</div>
+<script>
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const gbp = n => "£" + Math.round(n).toLocaleString("en-GB");
+const pct = (a, b) => b ? Math.round(100 * a / b) + "%" : "–";
+const fmtDay = iso => new Date(iso + "T12:00:00").toLocaleDateString("en-GB", {day:"numeric", month:"short"});
+const LABEL = {both:"Booked both", bgs:"BGS only", icons:"Icons only", none:"Not booked yet"};
+let DATA = null, EVENT = "all", STATUS = "all";
+
+function counts(list){
+  const c = {n:list.length, both:0, bgs:0, icons:0, none:0};
+  list.forEach(b => c[b.status]++);
+  c.anyBgs = c.both + c.bgs; c.anyIcons = c.both + c.icons; c.any = c.n - c.none;
+  return c;
+}
+
+function render(){
+  const d = DATA;
+  $("#error").innerHTML = d.error ? `<div class="err">Couldn't refresh from Odoo just now (${esc(d.error)}). Showing the last figures.</div>` : "";
+  const done = d.events.filter(e => e.past || e.sales);
+  const next = d.events.filter(e => !e.past && !e.sales);
+  const buyersAt = id => d.buyers.filter(b => b.eventId === id);
+
+  $("#eventChips").innerHTML = [`<button class="chip ${EVENT==="all"?"on":""}" data-e="all">All events<span class="cnt">${d.buyers.length}</span></button>`]
+    .concat(done.map(e => `<button class="chip ${EVENT==e.id?"on":""}" data-e="${e.id}">${esc(e.label)} · ${fmtDay(e.day)}<span class="cnt">${buyersAt(e.id).length}</span></button>`)).join("");
+
+  const list = EVENT === "all" ? d.buyers : buyersAt(+EVENT);
+  const c = counts(list);
+  $("#cards").innerHTML = `
+    <div class="card"><div class="k">Room buyers</div><div class="v">${c.n}</div><div class="s">people who bought in the room</div></div>
+    <div class="card bgs"><div class="k">Booked BGS</div><div class="v">${c.anyBgs}</div><div class="s">${pct(c.anyBgs, c.n)} of buyers</div></div>
+    <div class="card icons"><div class="k">Booked Icons</div><div class="v">${c.anyIcons}</div><div class="s">${pct(c.anyIcons, c.n)} of buyers</div></div>
+    <div class="card both"><div class="k">Booked both</div><div class="v">${c.both}</div><div class="s">${pct(c.both, c.n)} of buyers</div></div>
+    <div class="card none"><div class="k">Not booked yet</div><div class="v">${c.none}</div><div class="s">${pct(c.none, c.n)} of buyers</div></div>`;
+
+  $("#bar").innerHTML = c.n ? ["both","bgs","icons","none"].filter(k => c[k]).map(k =>
+    `<div style="flex:${c[k]};background:var(--${k})" title="${LABEL[k]}: ${c[k]}">${c[k]}</div>`).join("") : "";
+
+  // by event
+  const rows = done.map(e => ({e, c: counts(buyersAt(e.id))}));
+  const tot = counts(d.buyers);
+  const cell = (l, v, cls="r") => `<td class="${cls}" data-l="${l}"><div>${v}</div></td>`;
+  const evRow = (name, c, cls="") => `<tr class="${cls}"><td class="first">${name}</td>
+      ${cell("Room buyers", c.n)}${cell("Booked BGS", `${c.anyBgs} <span class="sub">${pct(c.anyBgs,c.n)}</span>`)}
+      ${cell("Booked Icons", `${c.anyIcons} <span class="sub">${pct(c.anyIcons,c.n)}</span>`)}
+      ${cell("Both", `${c.both} <span class="sub">${pct(c.both,c.n)}</span>`)}
+      ${cell("Not booked yet", `${c.none} <span class="sub">${pct(c.none,c.n)}</span>`)}</tr>`;
+  $("#byEvent").innerHTML = `<thead><tr><th>Event</th><th class="r">Room buyers</th><th class="r">Booked BGS</th><th class="r">Booked Icons</th><th class="r">Both</th><th class="r">Not booked yet</th></tr></thead><tbody>
+    ${rows.map(r => evRow(`${esc(r.e.label)} <span class="sub">${fmtDay(r.e.day)}</span>`, r.c)).join("")}
+    ${rows.length > 1 ? evRow("All events", tot, "total") : ""}
+    ${!rows.length ? `<tr><td class="first muted">No in-person events with room sales yet.</td></tr>` : ""}</tbody>`;
+
+  // buyers
+  $("#buyersHint").textContent = next.length
+    ? `Next events: ${next.slice(0,4).map(e => `${e.label} ${fmtDay(e.day)}`).join(", ")}. Sales show here once they're entered in Odoo after the day.`
+    : "Sales show here once they're entered in Odoo after the day.";
+  $("#statusChips").innerHTML = ["all","both","bgs","icons","none"].map(k => {
+    const n = k === "all" ? c.n : c[k];
+    return `<button class="chip ${STATUS===k?"on":""}" data-s="${k}">${k==="all"?"Everyone":LABEL[k]}<span class="cnt">${n}</span></button>`;
+  }).join("");
+  const shown = list.filter(b => STATUS === "all" || b.status === STATUS);
+  const dates = xs => xs.length ? xs.map(x => `<span class="date">${fmtDay(x.date)}</span>`).join(", ") + `<div class="sub">booked ${fmtDay(xs[0].bookedOn)}</div>` : `<span class="muted">–</span>`;
+  const boughtBgs = b => b.orders.some(o => /growth secrets/i.test(o.product));
+  $("#buyers").innerHTML = `<thead><tr><th>Buyer</th><th>Event</th><th>Bought in the room</th><th class="r">Ex VAT</th><th>BGS date</th><th>Icons date</th><th>Status</th></tr></thead><tbody>
+    ${shown.map(b => `<tr>
+      <td class="first">${esc(b.name)}</td>
+      ${cell("Event", `${esc(b.event)} <span class="sub">${fmtDay(b.eventDay)}</span>`, "")}
+      ${cell("Bought", b.orders.map(o => esc(o.product)).join(" + ") + (b.orders.some(o => o.paid === "paid") ? "" : ` <span class="sub">(part paid)</span>`), "")}
+      ${cell("Ex VAT", gbp(b.total))}
+      ${cell("BGS date", b.bgs.length ? dates(b.bgs) : (boughtBgs(b) ? `<span class="muted">bought BGS, no date yet</span>` : `<span class="muted">–</span>`), "")}
+      ${cell("Icons date", dates(b.icons), "")}
+      ${cell("Status", `<span class="pill ${b.status}">${LABEL[b.status]}</span>`, "")}
+    </tr>`).join("")}
+    ${!shown.length ? `<tr><td class="first muted">Nobody in this group.</td></tr>` : ""}</tbody>`;
+
+  const at = new Date(d.generatedAt);
+  $("#live").textContent = "LIVE · UPDATED " + at.toLocaleTimeString("en-GB", {hour:"2-digit", minute:"2-digit"});
+  $("#pip").className = "pip" + (d.error ? " err" : "");
+}
+
+async function load(force){
+  try{
+    const r = await fetch("/api/data" + (force ? "?force=1" : ""), {cache:"no-store"});
+    const d = await r.json();
+    if (d.loading){ $("#live").textContent = "LOADING FROM ODOO…"; setTimeout(load, 3000); return; }
+    DATA = d; render();
+  }catch(e){
+    $("#pip").className = "pip err"; $("#live").textContent = "CAN'T REACH THE DASHBOARD SERVER";
+  }
+}
+document.addEventListener("click", e => {
+  const ev = e.target.closest("[data-e]"), st = e.target.closest("[data-s]");
+  if (ev){ EVENT = ev.dataset.e; STATUS = "all"; render(); }
+  if (st){ STATUS = st.dataset.s; render(); }
+});
+$("#refresh").onclick = async () => { $("#refresh").textContent = "Refreshing…"; await load(true); $("#refresh").textContent = "Refresh now"; };
+load();
+setInterval(load, 60000);
+</script>
+</body>
+</html>
