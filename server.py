@@ -12,7 +12,7 @@ Rules
             Webinars (Scale Up Online, Encore webinars) are left out, and so are BGS / Icons /
             Mastermind / Gold Circle / implementation days themselves.
   room sale a confirmed order (state 'sale') on the event's Sales Orders tab (event.event.sale_ids),
-            dated on or after the event day, at least SALE_MIN ex VAT. That leaves out the £27 VIP
+            dated on or after the event day, SALE_MIN to SALE_MAX ex VAT. That leaves out the £27 VIP
             tickets and VIP upgrades. Test people are left out.
   buyer     one person (matched by Odoo partner, else email). Someone who bought at two events is
             credited to the first.
@@ -46,6 +46,7 @@ DASH_PUBLIC = os.environ.get("DASHBOARD_PUBLIC", "").lower() in ("1", "true", "y
 
 START = date(2026, 10, 14)
 SALE_MIN = 50
+SALE_MAX = 1500        # low-ticket only: high-ticket programmes (e.g. SRBM Academy, ALL IN) are left out
 REFRESH = 300
 
 
@@ -196,7 +197,7 @@ def build():
         sales = 0
         for oid in e["sale_ids"]:
             o = by_id.get(oid)
-            if not o or o["state"] != "sale" or o["amount_untaxed"] < SALE_MIN or local_day(o["date_order"]) < day:
+            if not o or o["state"] != "sale" or not SALE_MIN <= o["amount_untaxed"] <= SALE_MAX or local_day(o["date_order"]) < day:
                 continue
             p = partners.get(o["partner_id"][0], {})
             email = (p.get("email") or "").strip().lower()
@@ -266,7 +267,7 @@ def build():
         out.append(b)
     out.sort(key=lambda b: (b["eventDay"], b["name"].lower()))
     return {"generatedAt": datetime.now(timezone.utc).isoformat(), "today": t.isoformat(), "start": START.isoformat(),
-            "saleMin": SALE_MIN, "events": events_out, "buyers": out}
+            "saleMin": SALE_MIN, "saleMax": SALE_MAX, "events": events_out, "buyers": out}
 
 
 # ---------------------------------------------------------------- serving
